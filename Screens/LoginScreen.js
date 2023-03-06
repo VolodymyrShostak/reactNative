@@ -1,41 +1,105 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
   View,
   TextInput,
+  KeyboardAvoidingView,
   TouchableOpacity,
-  Image,
+  Keyboard,
+  Platform,
 } from "react-native";
 
+const initialState = {
+  email: "",
+  password: "",
+  
+  };
+
+
 export default function LoginScreen() {
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  const [state, setState] = useState(initialState);
+  const [hidePass, setHidePass] = useState(true);
+  const [focus, setFocus] = useState({
+    email: false,
+    password: false,
+  });
+ 
+  
+
+  const keyboardHide = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+    console.log(state);
+    setState(initialState);
+  };
+
+  
+  
+
   return (
     <View>
-      
-      <View style={styles.form}>
-        <Text style={styles.title}>Ввійти</Text>
-        
-        <TextInput
-          style={styles.input}
-          placeholder="Адреса електронної пошти"
-        />
-        <View>
-          <TextInput
-            style={styles.input}
-            placeholder="Пароль"
-            secureTextEntry={true}
-          />
-          {/* <Text style={styles.option}>Показати</Text> */}
-        </View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <View
+          style={{
+            ...styles.form,
+            paddingBottom: isShowKeyboard ? 390 : 94,
+          }}
+        >
+          <Text style={styles.title}>Ввійти</Text>
 
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.btnTitle}>Ввійти</Text>
-        </TouchableOpacity>
-        <View style={styles.wrapperCustom}>
-          <Text style={styles.text}>Немає акаунта?</Text>
-          <Text style={styles.text}>  Зареєструватись</Text>
+          <TextInput
+            style={{
+              ...styles.input,
+              borderColor: focus.email ? "#FF6C00" : "#E8E8E8",
+            }}
+            placeholder="Адреса електронної пошти"
+            value={state.email}
+            onFocus={() => {
+              setIsShowKeyboard(true);
+              setFocus((focus) => ({ ...focus, email: true }));
+            }}
+            onBlur={() => {
+              setIsShowKeyboard(false);
+              setFocus((focus) => ({ ...focus, email: false }));
+            }}
+            onChangeText={(text) => setState({ ...state, email: text })}
+          />
+          <View style={styles.passwordWrap}>
+            <TextInput
+              style={{
+                ...styles.input,
+                borderColor: focus.password ? "#FF6C00" : "#E8E8E8",
+              }}
+              placeholder="Пароль"
+              secureTextEntry={hidePass ? true : false}
+              value={state.password}
+              onFocus={() => {
+                setIsShowKeyboard(true);
+                setFocus((focus) => ({ ...focus, password: true }));
+              }}
+              onBlur={() => {
+                setIsShowKeyboard(false);
+                setFocus((focus) => ({ ...focus, password: false }));
+              }}
+              onChangeText={(text) => setState({ ...state, password: text })}
+            />
+            <Text style={styles.show} onPress={() => setHidePass(!hidePass)}>
+              {!hidePass ? "Hide" : "Show"}
+            </Text>
+          </View>
+          <TouchableOpacity style={styles.button} onPress={keyboardHide}>
+            <Text style={styles.btnTitle}>Ввійти</Text>
+          </TouchableOpacity>
+          <View style={styles.wrapperCustom}>
+            <Text style={styles.text}>Немає акаунта?</Text>
+            <Text style={styles.text}> Зареєструватись</Text>
+          </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </View>
   );
 }
@@ -51,8 +115,8 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto",
     fontSize: 16,
     lineHeight: 19,
-    color: "#BDBDBD",
-    // zIndex: 1,
+    color: "#212121",
+    
   },
   form: {
     backgroundColor: "#fff",
@@ -64,10 +128,23 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: 500,
     fontSize: 30,
+    fontFamily: "Roboto-Bold",
     lineHeight: 35,
     color: "#212121",
     marginTop: 32,
     marginBottom: 33,
+  },
+  passwordWrap: {
+    position: "relative",
+  },
+  show: {
+    position: "absolute",
+    right: 16,
+    top: "20%",
+    fontSize: 16,
+    lineHeight: 19,
+    color: "#1B4371",
+    
   },
   button: {
     backgroundColor: "#FF6C00",
@@ -87,7 +164,6 @@ const styles = StyleSheet.create({
   wrapperCustom: {
     flexDirection: "row",
     justifyContent: "center",
-    marginBottom: 110,
   },
   text: {
     textAlign: "center",
@@ -96,14 +172,7 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     color: "#1B4371",
   },
-  
-  icon: {
-    width: 25,
-    height: 25,
-    position: "absolute",
-    bottom: 14,
-    right: -12,
-  },
+
   option: {
     textAlign: "right",
     fontWeight: 400,
