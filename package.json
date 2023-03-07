@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo/webpack-config": "^18.0.1",
+    "electron": "^11.4.6",
     "expo": "~48.0.4",
     "expo-font": "^11.1.1",
     "expo-splash-screen": "^0.18.1",
@@ -19,8 +20,12 @@
     "react-native": "0.71.3",
     "react-native-web": "~0.18.10"
   },
+  "overrides": {
+    "react-devtools-core": "~4.25.0"
+  },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "react-devtools": "^4.27.2"
   },
   "private": true
 }
