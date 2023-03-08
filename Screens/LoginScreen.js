@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,8 +8,14 @@ import {
   TouchableOpacity,
   Keyboard,
   Platform,
+  ImageBackground,
+  TouchableWithoutFeedback,
+
 } from "react-native";
 
+
+import * as SplashScreen from "expo-splash-screen";
+import { useFonts } from "expo-font";
 const initialState = {
   email: "",
   password: "",
@@ -17,11 +23,13 @@ const initialState = {
   };
 
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
   const [hidePass, setHidePass] = useState(true);
+  const [isReady, setIsReady] = useState(false);
   const [focus, setFocus] = useState({
+    
     email: false,
     password: false,
   });
@@ -35,75 +43,117 @@ export default function LoginScreen() {
     setState(initialState);
   };
 
-  
+  const [fontsLoaded] = useFonts({
+    "Roboto-400": require("../assets/fonts/Roboto-Regular.ttf"),
+    "Roboto-500": require("../assets/fonts/Roboto-Medium.ttf"),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
   
 
   return (
-    <View>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-        <View
-          style={{
-            ...styles.form,
-            paddingBottom: isShowKeyboard ? 390 : 94,
-          }}
+    <TouchableWithoutFeedback onPress={keyboardHide}>
+      <View style={styles.container}>
+        <ImageBackground
+          style={styles.image}
+          source={require("../assets/background.jpg")}
         >
-          <Text style={styles.title}>Ввійти</Text>
-
-          <TextInput
-            style={{
-              ...styles.input,
-              borderColor: focus.email ? "#FF6C00" : "#E8E8E8",
-            }}
-            placeholder="Адреса електронної пошти"
-            value={state.email}
-            onFocus={() => {
-              setIsShowKeyboard(true);
-              setFocus((focus) => ({ ...focus, email: true }));
-            }}
-            onBlur={() => {
-              setIsShowKeyboard(false);
-              setFocus((focus) => ({ ...focus, email: false }));
-            }}
-            onChangeText={(text) => setState({ ...state, email: text })}
-          />
-          <View style={styles.passwordWrap}>
-            <TextInput
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+          >
+            <View
               style={{
-                ...styles.input,
-                borderColor: focus.password ? "#FF6C00" : "#E8E8E8",
+                ...styles.form,
+                paddingBottom: isShowKeyboard ? 390 : 94,
               }}
-              placeholder="Пароль"
-              secureTextEntry={hidePass ? true : false}
-              value={state.password}
-              onFocus={() => {
-                setIsShowKeyboard(true);
-                setFocus((focus) => ({ ...focus, password: true }));
-              }}
-              onBlur={() => {
-                setIsShowKeyboard(false);
-                setFocus((focus) => ({ ...focus, password: false }));
-              }}
-              onChangeText={(text) => setState({ ...state, password: text })}
-            />
-            <Text style={styles.show} onPress={() => setHidePass(!hidePass)}>
-              {!hidePass ? "Hide" : "Show"}
-            </Text>
-          </View>
-          <TouchableOpacity style={styles.button} onPress={keyboardHide}>
-            <Text style={styles.btnTitle}>Ввійти</Text>
-          </TouchableOpacity>
-          <View style={styles.wrapperCustom}>
-            <Text style={styles.text}>Немає акаунта?</Text>
-            <Text style={styles.text}> Зареєструватись</Text>
-          </View>
-        </View>
-      </KeyboardAvoidingView>
-    </View>
+              onLayout={onLayoutRootView}
+            >
+              <Text style={styles.title}>Ввійти</Text>
+
+              <TextInput
+                style={{
+                  ...styles.input,
+                  borderColor: focus.email ? "#FF6C00" : "#E8E8E8",
+                }}
+                placeholder="Адреса електронної пошти"
+                value={state.email}
+                onFocus={() => {
+                  setIsShowKeyboard(true);
+                  setFocus((focus) => ({ ...focus, email: true }));
+                }}
+                onBlur={() => {
+                  setIsShowKeyboard(false);
+                  setFocus((focus) => ({ ...focus, email: false }));
+                }}
+                onChangeText={(text) => setState({ ...state, email: text })}
+              />
+              <View style={styles.passwordWrap}>
+                <TextInput
+                  style={{
+                    ...styles.input,
+                    borderColor: focus.password ? "#FF6C00" : "#E8E8E8",
+                  }}
+                  placeholder="Пароль"
+                  secureTextEntry={hidePass ? true : false}
+                  value={state.password}
+                  onFocus={() => {
+                    setIsShowKeyboard(true);
+                    setFocus((focus) => ({ ...focus, password: true }));
+                  }}
+                  onBlur={() => {
+                    setIsShowKeyboard(false);
+                    setFocus((focus) => ({ ...focus, password: false }));
+                  }}
+                  onChangeText={(text) =>
+                    setState({ ...state, password: text })
+                  }
+                />
+                <Text
+                  style={styles.show}
+                  onPress={() => setHidePass(!hidePass)}
+                >
+                  {!hidePass ? "Сховати" : "Показати"}
+                </Text>
+              </View>
+              <TouchableOpacity style={styles.button} onPress={keyboardHide}>
+                <Text style={styles.btnTitle}>Ввійти</Text>
+              </TouchableOpacity>
+              <View style={styles.wrapperCustom}>
+                <Text style={styles.text}>Немає акаунта?</Text>
+                <Text
+                  style={styles.text}
+                  onPress={() => navigation.navigate("Registration")}
+                >
+                  {" "}
+                  Зареєструватись
+                </Text>
+              </View>
+            </View>
+          </KeyboardAvoidingView>
+        </ImageBackground>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  image: {
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "flex-end",
+  },
+
   input: {
     height: 54,
     marginBottom: 16,
@@ -116,7 +166,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     color: "#212121",
-    
   },
   form: {
     backgroundColor: "#fff",
@@ -128,7 +177,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: 500,
     fontSize: 30,
-    fontFamily: "Roboto-Bold",
+    fontFamily: "Roboto-Medium",
     lineHeight: 35,
     color: "#212121",
     marginTop: 32,
@@ -144,7 +193,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     color: "#1B4371",
-    
   },
   button: {
     backgroundColor: "#FF6C00",
