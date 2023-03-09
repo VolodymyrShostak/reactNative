@@ -20,7 +20,7 @@ const MainTab = createBottomTabNavigator();
 export const useRoute = (isAuth) => {
   
 
-  if (isAuth) {
+  if (!isAuth) {
     return (
       <AuthStack.Navigator>
         <AuthStack.Screen

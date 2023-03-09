@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     lineHeight: 13,
     color: "#212121",
-    fontWeight: 400,
+    fontFamily: "Roboto-Regular",
   },
 });
 export default DefaultPostsScreen;

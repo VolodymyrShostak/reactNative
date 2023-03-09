@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: "#F6F6F6",
     padding: 15,
-    fontWeight: 400,
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#212121",
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: "center",
-    fontWeight: 500,
+    fontFamily: "Roboto-Medium",
     fontSize: 30,
     fontWeight: "500",
     lineHeight: 35,
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     color: "#1B4371",
-    fontWeight: 400,
+    fontFamily: "Roboto-Regular",
   },
   button: {
     backgroundColor: Platform.OS === "ios" ? "transparent" : "#FF6C00",
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   },
   btnTitle: {
     textAlign: "center",
-    fontWeight: 400,
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#FFFFFF",
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   },
   text: {
     textAlign: "center",
-    fontWeight: 400,
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#1B4371",
@@ -125,7 +125,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#F6F6F6",
     borderRadius: 16,
     transform: [{ translateY: 60 }],
-
   },
   imgUser: {
     borderRadius: 16,
@@ -139,7 +138,7 @@ const styles = StyleSheet.create({
   },
   option: {
     textAlign: "right",
-    fontWeight: 400,
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#1B4371",

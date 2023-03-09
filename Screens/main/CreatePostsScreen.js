@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   hintText: {
-    fontSize: 400,
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#BDBDBD",
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   },
   btnTitle: {
     textAlign: "center",
-    fontWeight: 400,
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#BDBDBD",

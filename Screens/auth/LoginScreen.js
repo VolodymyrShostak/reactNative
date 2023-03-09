@@ -43,20 +43,7 @@ export default function LoginScreen({ navigation }) {
     setState(initialState);
   };
 
-  const [fontsLoaded] = useFonts({
-    "Roboto-400": require("../../assets/fonts/Roboto-Regular.ttf"),
-    "Roboto-500": require("../../assets/fonts/Roboto-Medium.ttf"),
-  });
-
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
+  
   
 
   return (
@@ -74,7 +61,7 @@ export default function LoginScreen({ navigation }) {
                 ...styles.form,
                 paddingBottom: isShowKeyboard ? 390 : 94,
               }}
-              onLayout={onLayoutRootView}
+              
             >
               <Text style={styles.title}>Ввійти</Text>
 
@@ -125,7 +112,7 @@ export default function LoginScreen({ navigation }) {
               </View>
               <TouchableOpacity
                 style={styles.button}
-                onPress={() => navigation.navigate("Main")}
+                // onPress={() => navigation.navigate("Home")}
               >
                 <Text style={styles.btnTitle}>Ввійти</Text>
               </TouchableOpacity>
@@ -165,7 +152,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: "#F6F6F6",
     padding: 15,
-    fontFamily: "Roboto-400",
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#212121",
@@ -180,7 +167,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: 500,
     fontSize: 30,
-    fontFamily: "Roboto-500",
+    fontFamily: "Roboto-Mediun",
     lineHeight: 35,
     color: "#212121",
     marginTop: 32,
@@ -206,7 +193,7 @@ const styles = StyleSheet.create({
   },
   btnTitle: {
     textAlign: "center",
-    fontWeight: 400,
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#FFFFFF",
@@ -218,7 +205,7 @@ const styles = StyleSheet.create({
   },
   text: {
     textAlign: "center",
-    fontWeight: 400,
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#1B4371",
@@ -226,7 +213,7 @@ const styles = StyleSheet.create({
 
   option: {
     textAlign: "right",
-    fontWeight: 400,
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#1B4371",

@@ -41,20 +41,7 @@ export default function RegistrationScreen({ navigation }) {
     console.log(state);
     setState(initialState);
   };
-  const [fontsLoaded] = useFonts({
-    "Roboto-400": require("../../assets/fonts/Roboto-Regular.ttf"),
-    "Roboto-500": require("../../assets/fonts/Roboto-Medium.ttf"),
-  });
-
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
+ 
   
   return (
     <View style={styles.container}>
@@ -79,7 +66,7 @@ export default function RegistrationScreen({ navigation }) {
                 ...styles.form,
                 paddingBottom: isShowKeyboard ? 70 : 29,
               }}
-              onLayout={onLayoutRootView}
+              
             >
               <Text style={styles.title}>Реєстрація</Text>
               <TextInput
@@ -195,9 +182,9 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: "center",
-    fontWeight: 500,
+    fontFamily: "Roboto-Medium",
     fontSize: 30,
-    fontFamily: "Roboto-500",
+    fontFamily: "Roboto-Medium",
     lineHeight: 35,
     color: "#212121",
     marginTop: 92,
@@ -213,7 +200,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     color: "#1B4371",
-    fontFamily: "Roboto-400",
+    fontFamily: "Roboto-Regular",
   },
   button: {
     backgroundColor: Platform.OS === "ios" ? "transparent" : "#FF6C00",
@@ -224,7 +211,7 @@ const styles = StyleSheet.create({
   },
   btnTitle: {
     textAlign: "center",
-    fontWeight: 400,
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#FFFFFF",
@@ -236,7 +223,7 @@ const styles = StyleSheet.create({
   },
   text: {
     textAlign: "center",
-    fontWeight: 400,
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#1B4371",
@@ -261,7 +248,7 @@ const styles = StyleSheet.create({
   },
   option: {
     textAlign: "right",
-    fontWeight: 400,
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#1B4371",
