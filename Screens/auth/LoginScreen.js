@@ -44,8 +44,8 @@ export default function LoginScreen({ navigation }) {
   };
 
   const [fontsLoaded] = useFonts({
-    "Roboto-400": require("../assets/fonts/Roboto-Regular.ttf"),
-    "Roboto-500": require("../assets/fonts/Roboto-Medium.ttf"),
+    "Roboto-400": require("../../assets/fonts/Roboto-Regular.ttf"),
+    "Roboto-500": require("../../assets/fonts/Roboto-Medium.ttf"),
   });
 
   const onLayoutRootView = useCallback(async () => {
@@ -64,7 +64,7 @@ export default function LoginScreen({ navigation }) {
       <View style={styles.container}>
         <ImageBackground
           style={styles.image}
-          source={require("../assets/background.jpg")}
+          source={require("../../assets/background.jpg")}
         >
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -123,7 +123,10 @@ export default function LoginScreen({ navigation }) {
                   {!hidePass ? "Сховати" : "Показати"}
                 </Text>
               </View>
-              <TouchableOpacity style={styles.button} onPress={keyboardHide}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => navigation.navigate("Main")}
+              >
                 <Text style={styles.btnTitle}>Ввійти</Text>
               </TouchableOpacity>
               <View style={styles.wrapperCustom}>
@@ -162,7 +165,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: "#F6F6F6",
     padding: 15,
-    fontFamily: "Roboto",
+    fontFamily: "Roboto-400",
     fontSize: 16,
     lineHeight: 19,
     color: "#212121",
@@ -177,7 +180,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: 500,
     fontSize: 30,
-    fontFamily: "Roboto-Medium",
+    fontFamily: "Roboto-500",
     lineHeight: 35,
     color: "#212121",
     marginTop: 32,

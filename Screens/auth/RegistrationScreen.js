@@ -27,6 +27,7 @@ export default function RegistrationScreen({ navigation }) {
   const [state, setState] = useState(initialState);
   const [hidePass, setHidePass] = useState(true);
   const [isReady, setIsReady] = useState(false);
+  const [isAuth, setIsAuth] = useState(false);
 
   const [focus, setFocus] = useState({
     login: false,
@@ -41,8 +42,8 @@ export default function RegistrationScreen({ navigation }) {
     setState(initialState);
   };
   const [fontsLoaded] = useFonts({
-    "Roboto-400": require("../assets/fonts/Roboto-Regular.ttf"),
-    "Roboto-500": require("../assets/fonts/Roboto-Medium.ttf"),
+    "Roboto-400": require("../../assets/fonts/Roboto-Regular.ttf"),
+    "Roboto-500": require("../../assets/fonts/Roboto-Medium.ttf"),
   });
 
   const onLayoutRootView = useCallback(async () => {
@@ -60,13 +61,13 @@ export default function RegistrationScreen({ navigation }) {
       <TouchableWithoutFeedback onPress={keyboardHide}>
         <ImageBackground
           style={styles.image}
-          source={require("../assets/background.jpg")}
+          source={require("../../assets/background.jpg")}
         >
           <View style={styles.imageWrap}>
             <View style={styles.imageSpace}>
               <Image
                 style={styles.icon}
-                source={require("../assets/iconAddPhoto.png")}
+                source={require("../../assets/iconAddPhoto.png")}
               />
             </View>
           </View>
@@ -143,7 +144,7 @@ export default function RegistrationScreen({ navigation }) {
                   {!hidePass ? "Сховати" : "Показати"}
                 </Text>
               </View>
-              <TouchableOpacity style={styles.button} onPress={keyboardHide}>
+              <TouchableOpacity style={styles.button} onPress={() => { setIsAuth(true); navigation.navigate("Home") }}>
                 <Text style={styles.btnTitle}>Зареєструватись</Text>
               </TouchableOpacity>
 
@@ -181,7 +182,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: "#F6F6F6",
     padding: 15,
-    fontFamily: "Roboto-Regular",
+    fontFamily: "Roboto-400",
     fontSize: 16,
     lineHeight: 19,
     color: "#212121",
@@ -196,7 +197,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: 500,
     fontSize: 30,
-    fontFamily: "Roboto-Medium",
+    fontFamily: "Roboto-500",
     lineHeight: 35,
     color: "#212121",
     marginTop: 92,
@@ -212,7 +213,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     color: "#1B4371",
-    fontFamily: "Roboto-Regular",
+    fontFamily: "Roboto-400",
   },
   button: {
     backgroundColor: Platform.OS === "ios" ? "transparent" : "#FF6C00",
