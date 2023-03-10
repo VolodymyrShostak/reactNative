@@ -1,8 +1,16 @@
-import { View, Image, StyleSheet, Text } from "react-native";
+import { View, Image, StyleSheet, Text, FlatList, Button} from "react-native";
 
-import React from "react";
+import React, {useEffect, useState} from "react";
 
-const DefaultPostsScreen = ({route, navigation } ) => {
+const DefaultPostsScreen = ({ route, navigation }) => {
+  const[posts,setPosts] = useState([]);
+  
+  useEffect(() => {
+    if (route.params) { setPosts(prevState => [...prevState, route.params]) }
+    
+  }, [route.params])
+
+
   return (
     <View style={styles.container}>
       <View style={styles.userData}>
@@ -17,6 +25,25 @@ const DefaultPostsScreen = ({route, navigation } ) => {
           <Text style={styles.textEmail}>email@example.com</Text>
         </View>
       </View>
+      <FlatList
+        style={{ marginTop: 32 }}
+        data={posts}
+        keyExtractor={(item, indx) => indx.toString()}
+        renderItem={({ item }) => (
+          <View style={{ marginBottom: 16 }}>
+            <Image source={{ uri: item.photo }} style={{ height: 200 }} />
+          </View>
+        )}
+      />
+
+      <Button
+        title="GO TO MAP"
+        onPress={() => navigation.navigate("Map")}
+      ></Button>
+      <Button
+        title="GO TO COMMENTS"
+        onPress={() => navigation.navigate("Comments")}
+      ></Button>
     </View>
   );
 };

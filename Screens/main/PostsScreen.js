@@ -10,6 +10,7 @@ import MapScreen from '../nestedScreens/MapScreen';
 const NestedStack = createStackNavigator();
 
 const PostsScreen = () => { 
+ 
   <NestedStack.Navigator>
     <NestedStack.Screen name="DefaultScreen" component={DefaultPostsScreen} />
     <NestedStack.Screen name="Comments" component={CommentScreen} />
