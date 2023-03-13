@@ -29,19 +29,20 @@ const CreatePostsScreen = ({navigation}) => {
   const keyboardHide = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
-    console.log(state);
+    
     setState(initialState);
   };
   const takePhoto = async () => {
-    
     const photo = await camera.takePictureAsync();
-  const location = await Location.getCurrentPositionAsync();
-  console.log("location", location);
+    const location = await Location.getCurrentPositionAsync();
+
     setPhoto(photo.uri);
-  }
-  const sendPhoto = async () => { 
-    navigation.navigate("Публікації", {photo})
-  }
+    setLocation(location);
+  };
+  const sendPhoto = async () => {
+   
+    navigation.navigate("Posts", { photo, location, state });
+  };
 
   useEffect(() => {
     (async () => {
@@ -58,8 +59,8 @@ const CreatePostsScreen = ({navigation}) => {
       setLocation(coords);
     })();
   }, []);
+  
 
-    
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
@@ -93,7 +94,7 @@ const CreatePostsScreen = ({navigation}) => {
                 setIsShowKeyboard(false);
                 // setFocus((focus) => ({ ...focus, password: false }));
               }}
-              onChangeText={(text) => setState({ ...state, title: text })}
+              onChangeText={(value) => setState({ ...state, title: value})}
             />
           </View>
           <View style={styles.inputWrap}>
@@ -101,7 +102,7 @@ const CreatePostsScreen = ({navigation}) => {
             <TextInput
               style={styles.inputIcon}
               placeholder="Місцевість"
-              value={state.title}
+              value={state.locate}
               onFocus={() => {
                 setIsShowKeyboard(true);
                 // setFocus((focus) => ({ ...focus, password: true }));
@@ -110,7 +111,7 @@ const CreatePostsScreen = ({navigation}) => {
                 setIsShowKeyboard(false);
                 // setFocus((focus) => ({ ...focus, password: false }));
               }}
-              onChangeText={(text) => setState({ ...state, title: text })}
+              onChangeText={(value) => setState({ ...state, locate: value })}
             />
           </View>
           <TouchableOpacity style={styles.button} onPress={sendPhoto}>

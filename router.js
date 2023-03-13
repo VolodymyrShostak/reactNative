@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import DefaultPostsScreen from "./Screens/nestedScreens/HomeScreen";
+import DefaultPostsScreen from "./Screens/nestedScreens/DefaultPostsScreen";
 import ProfileScreen from "./Screens/main/ProfileScreen";
 
 import CreatePostsScreen from "./Screens/main/CreatePostsScreen";
@@ -9,11 +10,11 @@ import RegisrationScreen from "./Screens/auth/RegistrationScreen";
 import LoginScreen from "./Screens/auth/LoginScreen";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
-import { Button } from "react-native";
+
 import { Ionicons } from "@expo/vector-icons";
 
 
-const AuthStack = createStackNavigator();
+const AuthStack = createNativeStackNavigator();
 const MainTab = createBottomTabNavigator();
 
 
@@ -38,7 +39,7 @@ export const useRoute = (isAuth) => {
   }
   return (
     <MainTab.Navigator
-      initialRouteName="Публікації"
+      initialRouteName="Posts"
       screenOptions={{
         tabBarShowLabel: false,
         tabBarActiveBackgroundColor: "#FF6C00",
@@ -55,9 +56,10 @@ export const useRoute = (isAuth) => {
       }}
     >
       <MainTab.Screen
-        name="Публікації"
+        name="Posts"
         component={DefaultPostsScreen}
         options={{
+          title: "Публікації",
           headerTitleStyle: {
             fontSize: 17,
             fontWeight: 500,
@@ -77,9 +79,10 @@ export const useRoute = (isAuth) => {
         }}
       />
       <MainTab.Screen
-        name="Створити публікацію"
+        name="CreatePosts"
         component={CreatePostsScreen}
         options={{
+          title: "Створити публікацію",
           headerTitleStyle: {
             fontSize: 17,
             fontWeight: 500,
@@ -99,9 +102,10 @@ export const useRoute = (isAuth) => {
         }}
       />
       <MainTab.Screen
-        name="Профіль"
+        name="Profile"
         component={ProfileScreen}
         options={{
+          title: "Профіль",
           headerShown: false,
 
           tabBarIcon: ({ focused, size, color }) => (
