@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import DefaultPostsScreen from "./Screens/nestedScreens/DefaultPostsScreen";
+
 import ProfileScreen from "./Screens/main/ProfileScreen";
 
 import CreatePostsScreen from "./Screens/main/CreatePostsScreen";
@@ -12,6 +12,7 @@ import { SimpleLineIcons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 
 import { Ionicons } from "@expo/vector-icons";
+import PostsScreen from "./Screens/main/PostsScreen";
 
 
 const AuthStack = createNativeStackNavigator();
@@ -57,7 +58,7 @@ export const useRoute = (isAuth) => {
     >
       <MainTab.Screen
         name="Posts"
-        component={DefaultPostsScreen}
+        component={PostsScreen}
         options={{
           title: "Публікації",
           headerTitleStyle: {

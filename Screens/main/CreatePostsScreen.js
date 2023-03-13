@@ -41,7 +41,7 @@ const CreatePostsScreen = ({navigation}) => {
   };
   const sendPhoto = async () => {
    
-    navigation.navigate("Posts", { photo, location, state });
+    navigation.navigate("DefaultScreen", { photo, location, state });
   };
 
   useEffect(() => {
