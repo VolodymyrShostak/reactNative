@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -13,50 +13,91 @@ import {
   TouchableWithoutFeedback,
 
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { authSignUpUser } from "../../redux/auth/authOperations";
+import { storage } from "../../firebase/config";
+import { uploadBytes, ref, getDownloadURL } from "firebase/storage";
 
-import * as SplashScreen from "expo-splash-screen";
-import { useFonts } from "expo-font";
-const initialState = {
-  login: "",
-  email: "",
-  password: "",
-};
+
 
 export default function RegistrationScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
-  const [state, setState] = useState(initialState);
+  
   const [hidePass, setHidePass] = useState(true);
-  const [isReady, setIsReady] = useState(false);
-  const [isAuth, setIsAuth] = useState(false);
+  const [avatar, setAvatar] = useState(null);
+  const [login, setLogin] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  
+  
 
   const [focus, setFocus] = useState({
     login: false,
     email: false,
     password: false,
   });
+  const dispatch = useDispatch();
+   const handleSetLogin = (text) => setLogin(text);
+   const handleSetEmail = (text) => setEmail(text);
+   const handleSetPassword = (text) => setPassword(text);
+   const formReset = () => {
+     setLogin("");
+     setAvatar(null);
+     setEmail("");
+     setPassword("");
+   };
 
-  const keyboardHide = () => {
-    setIsShowKeyboard(false);
-    Keyboard.dismiss();
-    console.log(state);
-    setState(initialState);
+  const uploadPhotoToServer = async (avatarId) => {
+    try {
+      const response = await fetch(avatar);
+      const file = await response.blob();
+      await uploadBytes(ref(storage, `avatars/${file._data.blobId}`), file);
+      const photoUrl = await getDownloadURL(
+        ref(storage, `avatars/${file._data.blobId}`)
+      );
+      return photoUrl;
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+ const handleSubmit = async () => {
+   Keyboard.dismiss();
+   if (email === "" || password === "" || login === "")
+     return console.log("Неможливо зареєструватися");
+
+   const avatar = await uploadPhotoToServer();
+   dispatch(authSignUpUser({ email, password, login, avatar }));
+   formReset();
+ };
+
+ const pickImage = async () => {
+   let result = await ImagePicker.launchImageLibraryAsync({
+     mediaTypes: ImagePicker.MediaTypeOptions.All,
+     allowsEditing: true,
+     aspect: [4, 3],
+     quality: 1,
+   });
+
+   if (!result.cancelled) {
+     setAvatar(result.assets[0].uri);
+   }
+ };
  
+
   
   return (
     <View style={styles.container}>
-      <TouchableWithoutFeedback onPress={keyboardHide}>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <ImageBackground
           style={styles.image}
           source={require("../../assets/background.jpg")}
         >
           <View style={styles.imageWrap}>
-            <View style={styles.imageSpace}>
-              <Image
-                style={styles.icon}
-                source={require("../../assets/iconAddPhoto.png")}
-              />
-            </View>
+            <Image style={styles.imageSpace} source={{ uri: avatar }} />
+            <TouchableOpacity style={styles.icon} onPress={pickImage}>
+              <Image source={require("../../assets/iconAddPhoto.png")} />
+            </TouchableOpacity>
           </View>
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -66,7 +107,6 @@ export default function RegistrationScreen({ navigation }) {
                 ...styles.form,
                 paddingBottom: isShowKeyboard ? 70 : 29,
               }}
-              
             >
               <Text style={styles.title}>Реєстрація</Text>
               <TextInput
@@ -75,7 +115,7 @@ export default function RegistrationScreen({ navigation }) {
                   borderColor: focus.login ? "#FF6C00" : "#E8E8E8",
                 }}
                 placeholder="Логін"
-                value={state.login}
+                value={login}
                 onFocus={() => {
                   setIsShowKeyboard(true);
                   setFocus((focus) => ({ ...focus, login: true }));
@@ -84,7 +124,7 @@ export default function RegistrationScreen({ navigation }) {
                   setIsShowKeyboard(false);
                   setFocus((focus) => ({ ...focus, login: false }));
                 }}
-                onChangeText={(text) => setState({ ...state, login: text })}
+                onChangeText={handleSetLogin}
               />
               <TextInput
                 style={{
@@ -92,7 +132,7 @@ export default function RegistrationScreen({ navigation }) {
                   borderColor: focus.email ? "#FF6C00" : "#E8E8E8",
                 }}
                 placeholder="Адреса електронної пошти"
-                value={state.email}
+                value={email}
                 onFocus={() => {
                   setIsShowKeyboard(true);
                   setFocus((focus) => ({ ...focus, email: true }));
@@ -101,7 +141,7 @@ export default function RegistrationScreen({ navigation }) {
                   setIsShowKeyboard(false);
                   setFocus((focus) => ({ ...focus, email: false }));
                 }}
-                onChangeText={(text) => setState({ ...state, email: text })}
+                onChangeText={handleSetEmail}
               />
               <View style={styles.passwordWrap}>
                 <TextInput
@@ -111,7 +151,7 @@ export default function RegistrationScreen({ navigation }) {
                   }}
                   placeholder="Пароль"
                   secureTextEntry={hidePass ? true : false}
-                  value={state.password}
+                  value={password}
                   onFocus={() => {
                     setIsShowKeyboard(true);
                     setFocus((focus) => ({ ...focus, password: true }));
@@ -120,9 +160,7 @@ export default function RegistrationScreen({ navigation }) {
                     setIsShowKeyboard(false);
                     setFocus((focus) => ({ ...focus, password: false }));
                   }}
-                  onChangeText={(text) =>
-                    setState({ ...state, password: text })
-                  }
+                  onChangeText={handleSetPassword}
                 />
                 <Text
                   style={styles.show}
@@ -131,7 +169,7 @@ export default function RegistrationScreen({ navigation }) {
                   {!hidePass ? "Сховати" : "Показати"}
                 </Text>
               </View>
-              <TouchableOpacity style={styles.button} onPress={() => { setIsAuth(true); navigation.navigate("Home") }}>
+              <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.btnTitle}>Зареєструватись</Text>
               </TouchableOpacity>
 
@@ -169,7 +207,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: "#F6F6F6",
     padding: 15,
-    fontFamily: "Roboto-400",
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#212121",

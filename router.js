@@ -13,6 +13,7 @@ import { Feather } from "@expo/vector-icons";
 
 import { Ionicons } from "@expo/vector-icons";
 import PostsScreen from "./Screens/main/PostsScreen";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 
 const AuthStack = createNativeStackNavigator();
@@ -72,7 +73,10 @@ export const useRoute = (isAuth) => {
           },
           headerTitleAlign: "center",
           headerRight: () => (
-            <Ionicons name="exit-outline" size={30} color="black" />
+             <TouchableOpacity>
+
+               <Ionicons name="exit-outline" size={30} color="black" />
+             </TouchableOpacity>
           ),
           tabBarIcon: ({ focused, size, color }) => (
             <SimpleLineIcons name="grid" size={24} color={color} />

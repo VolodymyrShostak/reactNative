@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState} from "react";
 import {
   StyleSheet,
   Text,
@@ -14,40 +14,38 @@ import {
 } from "react-native";
 
 
-import * as SplashScreen from "expo-splash-screen";
-import { useFonts } from "expo-font";
+import { useDispatch } from "react-redux";
+import { authSignInUser } from "../../redux/auth/authOperations";
+
 const initialState = {
   email: "",
   password: "",
   
   };
-
-
 export default function LoginScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
   const [hidePass, setHidePass] = useState(true);
-  const [isReady, setIsReady] = useState(false);
-  const [focus, setFocus] = useState({
+    const [focus, setFocus] = useState({
     
     email: false,
     password: false,
   });
- 
+ const dispatch = useDispatch();
   
 
-  const keyboardHide = () => {
-    setIsShowKeyboard(false);
+  const handleSubmit = () => {
+   
     Keyboard.dismiss();
-    console.log(state);
-    setState(initialState);
+    dispatch(authSignInUser(state));
+       setState(initialState);
   };
 
   
   
 
   return (
-    <TouchableWithoutFeedback onPress={keyboardHide}>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
         <ImageBackground
           style={styles.image}
@@ -61,7 +59,6 @@ export default function LoginScreen({ navigation }) {
                 ...styles.form,
                 paddingBottom: isShowKeyboard ? 390 : 94,
               }}
-              
             >
               <Text style={styles.title}>Ввійти</Text>
 
@@ -80,7 +77,9 @@ export default function LoginScreen({ navigation }) {
                   setIsShowKeyboard(false);
                   setFocus((focus) => ({ ...focus, email: false }));
                 }}
-                onChangeText={(text) => setState({ ...state, email: text })}
+                onChangeText={(value) =>
+                  setState((prevState) => ({ ...prevState, email: value }))
+                }
               />
               <View style={styles.passwordWrap}>
                 <TextInput
@@ -110,10 +109,7 @@ export default function LoginScreen({ navigation }) {
                   {!hidePass ? "Сховати" : "Показати"}
                 </Text>
               </View>
-              <TouchableOpacity
-                style={styles.button}
-                // onPress={() => navigation.navigate("Home")}
-              >
+              <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.btnTitle}>Ввійти</Text>
               </TouchableOpacity>
               <View style={styles.wrapperCustom}>
@@ -167,7 +163,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: 500,
     fontSize: 30,
-    fontFamily: "Roboto-Mediun",
+    fontFamily: "Roboto-Medium",
     lineHeight: 35,
     color: "#212121",
     marginTop: 32,
