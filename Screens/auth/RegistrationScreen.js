@@ -11,25 +11,20 @@ import {
   Keyboard,
   ImageBackground,
   TouchableWithoutFeedback,
-
 } from "react-native";
 import { useDispatch } from "react-redux";
 import { authSignUpUser } from "../../redux/auth/authOperations";
 import { storage } from "../../firebase/config";
 import { uploadBytes, ref, getDownloadURL } from "firebase/storage";
 
-
-
 export default function RegistrationScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
-  
+
   const [hidePass, setHidePass] = useState(true);
   const [avatar, setAvatar] = useState(null);
   const [login, setLogin] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  
-  
 
   const [focus, setFocus] = useState({
     login: false,
@@ -37,15 +32,15 @@ export default function RegistrationScreen({ navigation }) {
     password: false,
   });
   const dispatch = useDispatch();
-   const handleSetLogin = (text) => setLogin(text);
-   const handleSetEmail = (text) => setEmail(text);
-   const handleSetPassword = (text) => setPassword(text);
-   const formReset = () => {
-     setLogin("");
-     setAvatar(null);
-     setEmail("");
-     setPassword("");
-   };
+  const handleSetLogin = (text) => setLogin(text);
+  const handleSetEmail = (text) => setEmail(text);
+  const handleSetPassword = (text) => setPassword(text);
+  const formReset = () => {
+    setLogin("");
+    setAvatar(null);
+    setEmail("");
+    setPassword("");
+  };
 
   const uploadPhotoToServer = async (avatarId) => {
     try {
@@ -61,31 +56,29 @@ export default function RegistrationScreen({ navigation }) {
     }
   };
 
- const handleSubmit = async () => {
-   Keyboard.dismiss();
-   if (email === "" || password === "" || login === "")
-     return console.log("Неможливо зареєструватися");
+  const handleSubmit = async () => {
+    Keyboard.dismiss();
+    if (email === "" || password === "" || login === "")
+      return console.log("Неможливо зареєструватися");
 
-   const avatar = await uploadPhotoToServer();
-   dispatch(authSignUpUser({ email, password, login, avatar }));
-   formReset();
- };
+    const avatar = await uploadPhotoToServer();
+    dispatch(authSignUpUser({ email, password, login, avatar }));
+    formReset();
+  };
 
- const pickImage = async () => {
-   let result = await ImagePicker.launchImageLibraryAsync({
-     mediaTypes: ImagePicker.MediaTypeOptions.All,
-     allowsEditing: true,
-     aspect: [4, 3],
-     quality: 1,
-   });
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
 
-   if (!result.cancelled) {
-     setAvatar(result.assets[0].uri);
-   }
- };
- 
+    if (!result.cancelled) {
+      setAvatar(result.assets[0].uri);
+    }
+  };
 
-  
   return (
     <View style={styles.container}>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -105,7 +98,7 @@ export default function RegistrationScreen({ navigation }) {
             <View
               style={{
                 ...styles.form,
-                paddingBottom: isShowKeyboard ? 70 : 29,
+                paddingBottom: isShowKeyboard ? 70 : 129,
               }}
             >
               <Text style={styles.title}>Реєстрація</Text>

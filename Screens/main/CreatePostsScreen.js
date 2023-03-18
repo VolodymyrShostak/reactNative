@@ -4,7 +4,9 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  Image,
+  ImageBackground,
+  KeyboardAvoidingView,
+  Keyboard,
 } from "react-native";
 
 import React, { useState, useEffect} from "react";
@@ -13,6 +15,11 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { Camera } from "expo-camera";
 import * as Location from "expo-location";
+import * as MediaLibrary from "expo-media-library";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, addDoc, getFirestore } from "firebase/firestore";
+import { useSelector } from "react-redux";
+
 
 const initialState = {
   title: "",
@@ -25,6 +32,11 @@ const CreatePostsScreen = ({navigation}) => {
   const [camera, setCamera] = useState(null);
   const [photo, setPhoto] = useState("");
   const [location, setLocation] = useState(null);
+  const [place, setPlace] = useState(null);
+   const [hasPermission, setHasPermission] = useState(null);
+  const [coords, setCoords] = useState(null);
+  const { userId, nickname } = useSelector((state) => state.auth);
+
 
   const keyboardHide = () => {
     setIsShowKeyboard(false);
@@ -39,85 +51,163 @@ const CreatePostsScreen = ({navigation}) => {
     setPhoto(photo.uri);
     setLocation(location);
   };
-  const sendPhoto = async () => {
-   
-    navigation.navigate("DefaultScreen", { photo, location, state });
+  
+ useEffect(() => {
+   (async () => {
+     const { status } = await Camera.requestCameraPermissionsAsync();
+     await MediaLibrary.requestPermissionsAsync();
+
+     setHasPermission(status === "granted");
+   })();
+   (async () => {
+     let { status } = await Location.requestForegroundPermissionsAsync();
+     if (status !== "granted") {
+       console.log("Permission to access location was denied");
+     }
+
+     let location = await Location.getCurrentPositionAsync({});
+     const coords = {
+       latitude: location.coords.latitude,
+       longitude: location.coords.longitude,
+     };
+     setCoords(coords);
+   })();
+ }, []);
+  if (hasPermission === null) {
+    return <View />;
+  }
+  if (hasPermission === false) {
+    return <Text>No access to camera</Text>;
+  }
+  const resetPhoto = () => {
+    setPhoto("");
+    setLocation("");
+    setPlace("");
   };
 
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.log("Permission to access location was denied");
-      }
+  const uploadPhotoToServer = async () => {
+    try {
+      const response = await fetch(photo);
+      const file = await response.blob();
+      const uniquePostId = Date.now().toString();
+      const storage = getStorage();
+      const pathReference = await ref(storage, `postImage/${uniquePostId}`);
+      await uploadBytes(pathReference, file).then((photo) =>
+        console.log("Uploaded a blob photo", photo)
+      );
+      const downloadedPhoto = await getDownloadURL(pathReference)
+        .then((data) => data)
+        .catch((error) => {
+          console.log(error);
+        });
+      return downloadedPhoto;
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-      let location = await Location.getCurrentPositionAsync({});
-      const coords = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      };
-      setLocation(coords);
-    })();
-  }, []);
+  const uploadPost = async () => {
+    const db = getFirestore();
+    try {
+      const photo = await uploadPhotoToServer();
+      if (!photo) return;
+      await addDoc(collection(db, "posts"), {
+        userId,
+        nickname,
+        photo,
+        place,
+        location,
+        coords: coords,
+        date: Date.now().toString(),
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const sendPost = () => {
+    if (!photo) return;
+    uploadPost();
+    navigation.navigate("Публікації", { photo, location, state });
+    resetPhoto();
+  };
+
   
 
   return (
-    <TouchableWithoutFeedback onPress={keyboardHide}>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
-        <View style={styles.imgWrap}>
-          <Camera style={styles.camera} ref={setCamera}>
-            {photo && (
-              <View style={styles.image}>
-                <Image
-                  source={{ uri: photo }}
-                  style={{ height: 130, width: 130 }}
-                />
-              </View>
-            )}
-            <TouchableOpacity style={styles.iconWrap} onPress={takePhoto}>
-              <MaterialIcons name="camera-alt" size={35} color="#BDBDBD" />
-            </TouchableOpacity>
-          </Camera>
+        {!photo ? (
+          <View
+            style={{
+              ...styles.imgWrap,
+              display: isShowKeyboard ? "none" : "flex",
+            }}
+          >
+            <Camera style={styles.camera} ref={setCamera}>
+              <TouchableOpacity style={styles.iconWrap} onPress={takePhoto}>
+                <MaterialIcons name="camera-alt" size={35} color="#BDBDBD" />
+              </TouchableOpacity>
+            </Camera>
 
-          <Text style={styles.hintText}>Завантажте фото</Text>
+            <Text style={styles.hintText}>Завантажити фото</Text>
+          </View>
+        ) : (
+          <View
+            style={{
+              ...styles.imgWrap,
+              display: isShowKeyboard ? "none" : "flex",
+            }}
+          >
+            <ImageBackground
+              source={{ uri: photo }}
+              style={{
+                height: "100%",
+                width: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <TouchableOpacity style={styles.iconWrap} onPress={resetPhoto}>
+                <MaterialIcons name="camera-alt" size={35} color="#BDBDBD" />
+              </TouchableOpacity>
+            </ImageBackground>
 
-          <View style={styles.inputWrap}>
-            <TextInput
-              style={styles.input}
-              placeholder="Назва"
-              value={state.title}
-              onFocus={() => {
-                setIsShowKeyboard(true);
-                // setFocus((focus) => ({ ...focus, password: true }));
-              }}
-              onBlur={() => {
-                setIsShowKeyboard(false);
-                // setFocus((focus) => ({ ...focus, password: false }));
-              }}
-              onChangeText={(value) => setState({ ...state, title: value})}
-            />
+            <Text style={styles.hintText}>Редагувати фото</Text>
           </View>
-          <View style={styles.inputWrap}>
-            <Feather name="map-pin" size={24} color="#BDBDBD" />
-            <TextInput
-              style={styles.inputIcon}
-              placeholder="Місцевість"
-              value={state.locate}
-              onFocus={() => {
-                setIsShowKeyboard(true);
-                // setFocus((focus) => ({ ...focus, password: true }));
-              }}
-              onBlur={() => {
-                setIsShowKeyboard(false);
-                // setFocus((focus) => ({ ...focus, password: false }));
-              }}
-              onChangeText={(value) => setState({ ...state, locate: value })}
-            />
-          </View>
-          <TouchableOpacity style={styles.button} onPress={sendPhoto}>
-            <Text style={styles.btnTitle}>Опублікувати</Text>
-          </TouchableOpacity>
+        )}
+
+        <View style={styles.inputWrap}>
+          <TextInput
+            style={styles.input}
+            placeholder="Назва"
+            value={state.title}
+            onFocus={() => {
+              setIsShowKeyboard(true);
+            }}
+            onBlur={() => {
+              setIsShowKeyboard(false);
+            }}
+            onChangeText={(value) => setState({ ...state, title: value })}
+          />
         </View>
+        <View style={styles.inputWrap}>
+          <Feather name="map-pin" size={24} color="#BDBDBD" />
+          <TextInput
+            style={styles.inputIcon}
+            placeholder="Місцевість"
+            value={state.locate}
+            onFocus={() => {
+              setIsShowKeyboard(true);
+            }}
+            onBlur={() => {
+              setIsShowKeyboard(false);
+            }}
+            onChangeText={(value) => setState({ ...state, locate: value })}
+          />
+        </View>
+        <TouchableOpacity style={styles.button} onPress={sendPost}>
+          <Text style={styles.btnTitle}>Опублікувати</Text>
+        </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -137,6 +227,8 @@ const styles = StyleSheet.create({
     height: 267,
     backgroundColor: "#fff",
     marginBottom: 16,
+    justifyContent: "center",
+    alignItems: "center",
   },
   camera: {
     width: "100%",
@@ -149,7 +241,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-    position: "absolute",
     top: 0,
     left: 0,
     backgroundColor: "#F6F6F6",
@@ -164,6 +255,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     color: "#BDBDBD",
+    
   },
 
   iconWrap: {

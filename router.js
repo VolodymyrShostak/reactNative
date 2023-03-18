@@ -61,23 +61,8 @@ export const useRoute = (isAuth) => {
         name="Posts"
         component={PostsScreen}
         options={{
-          title: "Публікації",
-          headerTitleStyle: {
-            fontSize: 17,
-            fontWeight: 500,
-            color: "#212121",
-          },
-          headerStyle: {
-            borderBottomWidth: 0.3,
-            borderBottomColor: "#B3B3B3",
-          },
-          headerTitleAlign: "center",
-          headerRight: () => (
-             <TouchableOpacity>
-
-               <Ionicons name="exit-outline" size={30} color="black" />
-             </TouchableOpacity>
-          ),
+          headerShown: false,
+         
           tabBarIcon: ({ focused, size, color }) => (
             <SimpleLineIcons name="grid" size={24} color={color} />
           ),
@@ -110,7 +95,7 @@ export const useRoute = (isAuth) => {
         name="Profile"
         component={ProfileScreen}
         options={{
-          title: "Профіль",
+          
           headerShown: false,
 
           tabBarIcon: ({ focused, size, color }) => (

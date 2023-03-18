@@ -53,7 +53,7 @@ const DefaultPostsScreen = ({ route, navigation }) => {
                   justifyContent: "space-between",
                 }}
                 onPress={() => {
-                  navigation.navigate("CommentsScreen");
+                  navigation.navigate("Коментарі",{id: item.id, photo: item.photo});
                 }}
               >
                 <Feather name="message-circle" size={18} color="#BDBDBD" />
@@ -73,7 +73,7 @@ const DefaultPostsScreen = ({ route, navigation }) => {
                   justifyContent: "space-between",
                 }}
                 onPress={() => {
-                  navigation.navigate("MapScreen", {
+                  navigation.navigate("Мапа", {
                     location: item.location,
                   });
                 }}
@@ -94,15 +94,7 @@ const DefaultPostsScreen = ({ route, navigation }) => {
         )}
       />
 
-      {/* <Button
-        title="GO TO MAP"
-        onPress={() => navigation.navigate("Map")}
-      ></Button>
-      <Button
-        title="GO TO COMMENTS"
-        onPress={() => navigation.navigate("Comments")}
-      ></Button> */}
-    </View>
+         </View>
   );
 };
 const styles = StyleSheet.create({

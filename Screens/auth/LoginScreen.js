@@ -1,4 +1,5 @@
-import React, { useState} from "react";
+import React from "react";
+import { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -57,7 +58,7 @@ export default function LoginScreen({ navigation }) {
             <View
               style={{
                 ...styles.form,
-                paddingBottom: isShowKeyboard ? 390 : 94,
+                paddingBottom: isShowKeyboard ? 32 : 94,
               }}
             >
               <Text style={styles.title}>Ввійти</Text>
