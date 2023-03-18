@@ -13,6 +13,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { useDispatch } from "react-redux";
+import * as ImagePicker from "expo-image-picker";
 import { authSignUpUser } from "../../redux/auth/authOperations";
 import { storage } from "../../firebase/config";
 import { uploadBytes, ref, getDownloadURL } from "firebase/storage";
@@ -192,6 +193,17 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     justifyContent: "flex-end",
   },
+  imageWrap: {
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 2,
+  },
+  icon: {
+    width: 25,
+    height: 25,
+    position: "absolute",
+   transform: [{translateY: 90}, {translateX: 60}],
+  },
 
   input: {
     height: 54,
@@ -259,10 +271,7 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     color: "#1B4371",
   },
-  imageWrap: {
-    alignItems: "center",
-    zIndex: 2,
-  },
+
   imageSpace: {
     width: 120,
     height: 120,
@@ -270,13 +279,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     transform: [{ translateY: 60 }],
   },
-  icon: {
-    width: 25,
-    height: 25,
-    position: "absolute",
-    bottom: 14,
-    right: -12,
-  },
+
   option: {
     textAlign: "right",
     fontFamily: "Roboto-Regular",
